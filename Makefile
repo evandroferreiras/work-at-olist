@@ -14,3 +14,6 @@ test:
 
 install:
 	pip install -r requirements/dev.txt
+
+create_db_dev:
+	docker-compose up -d --build

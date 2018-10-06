@@ -7,6 +7,9 @@ This is a RESTFul API developed in Python that has two main features:
 - [Python 3.7](https://docs.python.org/3/whatsnew/3.7.html)
 - [Flask](http://flask.pocoo.org/)
 - [Flask RestPlus](http://flask-restplus.readthedocs.io/)
+- [Docker Compose](https://docs.docker.com/compose/)
+- [Docker](https://www.docker.com/)
+- [PostGresSQL](https://www.postgresql.org/)
 
 ## How to **Run**
 
@@ -16,8 +19,12 @@ Don't forget to prepare and activate your virtual env, then install your environ
 make install
 ```
 
-To run, run the command below:
+Make sure you run the local database:
+```
+make create_db_dev
+```
 
+Then, run the API:
 ```
 make run_dev
 ```
