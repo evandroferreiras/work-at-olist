@@ -3,6 +3,10 @@ This is a RESTFul API developed in Python that has two main features:
 - Receives call detail records and store 
 - Calculate monthly bills for a given telephone number.
 
+
+## API Documentation
+The documentation is built in Swagger format: https://olist-evandroferreiras.herokuapp.com/docs
+
 ## Built With
 - [Python 3.7](https://docs.python.org/3/whatsnew/3.7.html)
 - [Flask](http://flask.pocoo.org/)

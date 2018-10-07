@@ -8,5 +8,8 @@ RUN apk update && \
     apk --purge del .build-deps
 ADD . /
 WORKDIR /
-ENTRYPOINT [ "gunicorn", "-c", "../gunicorn.py", "app:app"]
-EXPOSE 5000
+
+RUN adduser -D myuser
+USER myuser
+
+CMD gunicorn --bind 0.0.0.0:$PORT app:app
