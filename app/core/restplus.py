@@ -3,15 +3,16 @@ from flask_restplus import Api
 from app.core.log_wrapper import log
 from app.core.settings import LocalhostConfig, ProductionConfig, TestConfig
 from app.core.env_var_wrapper import EnvironmentVariableWrapper
+from werkzeug.contrib.fixers import ProxyFix
 
 bp = Blueprint('api', __name__)
 api = Api(bp, version='1.0', title='Calls API',
-          description='A Olist test', validate=True)
+          description='A Olist test', validate=True, doc='/docs')
 
 
 def init_app():
     app = Flask(__name__)
-
+    app.wsgi_app = ProxyFix(app.wsgi_app)
     env = EnvironmentVariableWrapper().env()
     if env == 'development':
         LocalhostConfig(app).config()
