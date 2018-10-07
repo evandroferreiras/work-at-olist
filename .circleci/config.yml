@@ -1,7 +1,45 @@
+defaults: &system
+  working_directory: ~/workspace
+  docker:
+    - image: circleci/python:3.7.0
+
 version: 2
 jobs:
+  tests:
+    <<: *system
+
+    steps:
+      - checkout
+
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "requirements/common.txt" }}
+            - v1-dependencies-
+
+      - run:
+          name: install dependencies
+          command: |
+            python3 -m venv venv
+            . venv/bin/activate
+            pip install -r requirements/prod.txt
+
+      - save_cache:
+          paths:
+            - ./venv
+          key: v1-dependencies-{{ checksum "requirements/common.txt" }}
+
+      - run:
+          name: run lint and tests
+          command: |
+            . venv/bin/activate
+            make test
+
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - workspace      
   deploy:
-    working_directory: ~/deploy
+    working_directory: ~/workspace
     machine:
       image: circleci/classic:edge
     steps:
@@ -23,20 +61,47 @@ jobs:
       - run:
           name: Release the app
           command: bash .circleci/heroku-container-release.sh
+       
+      - run:
+          name: Execute Heroku maintenance off
+          command: heroku maintenance:off --app ${HEROKU_APP_NAME}
+  run_migrate:
+    working_directory: ~/workspace
+    machine:
+      image: circleci/classic:edge
+    steps:
+      - checkout
+      - run:
+          name: Setup Heroku command
+          command: bash .circleci/setup_heroku.sh      
       - run:
           name: Execute Heroku db migrate
-          command: heroku run flask db upgrade --app ${HEROKU_APP_NAME}
-      - run:
-          name: Execut Heroku maintenance off
-          command: heroku maintenance:off --app ${HEROKU_APP_NAME}
-
+          command: |
+            sleep 5s 
+            heroku run flask db upgrade --app ${HEROKU_APP_NAME}   
 workflows:
   version: 2
+  validation:
+    jobs:
+      - tests  
   test-deploy:
     jobs:
+      - tests:
+          filters:
+            branches:
+              only: 
+                - master
       - deploy:
           filters:
             branches:
               only: 
                 - master
-                - feature/deploy-to-heroku
+          requires:
+            - tests
+      - run_migrate:
+          filters:
+            branches:
+              only: 
+                - master
+          requires:
+            - deploy              
