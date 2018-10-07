@@ -1,6 +1,8 @@
 from flask import Flask, Blueprint
 from flask_restplus import Api
 from app.core.log_wrapper import log
+from app.core.settings import LocalhostConfig, ProductionConfig, TestConfig
+from app.core.env_var_wrapper import EnvironmentVariableWrapper
 
 bp = Blueprint('api', __name__)
 api = Api(bp, version='1.0', title='Calls API',
@@ -9,7 +11,19 @@ api = Api(bp, version='1.0', title='Calls API',
 
 def init_app():
     app = Flask(__name__)
-    app.config['ERROR_404_HELP'] = False
+
+    env = EnvironmentVariableWrapper().env()
+    if env == 'development':
+        LocalhostConfig(app).config()
+    elif env == 'production':
+        ProductionConfig(app).config()
+    elif env == 'test':
+        TestConfig(app).config()
+    else:
+        raise ValueError(
+            'Please, inform FLASK_ENV. Possible values = ' +
+            '[development, qa, production]')
+
     app.register_blueprint(bp)
     return app
 

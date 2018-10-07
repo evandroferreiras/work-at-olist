@@ -7,6 +7,8 @@ This is a RESTFul API developed in Python that has two main features:
 - [Python 3.7](https://docs.python.org/3/whatsnew/3.7.html)
 - [Flask](http://flask.pocoo.org/)
 - [Flask RestPlus](http://flask-restplus.readthedocs.io/)
+- [Flask SQL Alchemy](http://flask-sqlalchemy.pocoo.org/)
+- [Flask Migrate](https://flask-migrate.readthedocs.io/en/latest/)
 - [Docker Compose](https://docs.docker.com/compose/)
 - [Docker](https://www.docker.com/)
 - [PostGresSQL](https://www.postgresql.org/)
@@ -24,11 +26,23 @@ Make sure you run the local database:
 make create_db_dev
 ```
 
+Update your database running the migrations:
+```
+make apply_upgrade_dev 
+```
+
 Then, run the API:
 ```
 make run_dev
 ```
 > Observation: We use flake8 to standardize the code style. The `make run_dev` will give you errors if your code has problems.
+
+## Database models
+We use SQL Alchemy as ORM. 
+After create a new database model(folder `app/db_models`), you have to generate the migrations file:
+```
+make generate_migrate
+```
 
 ## How to **Test**
 

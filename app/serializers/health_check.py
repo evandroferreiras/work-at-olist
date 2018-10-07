@@ -2,5 +2,6 @@ from app.core.restplus import api
 from flask_restplus import fields
 
 health_check_serializer = api.model('HealthCheck', {
-    'message': fields.String(readonly=True, description='The status message', example='its working')
+    'connected': fields.Boolean(readonly=True, description='True if is database connected', example=True),
+    'status': fields.String(readonly=True, description='The database status', example='Some error ')
 })
