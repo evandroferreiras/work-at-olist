@@ -4,10 +4,13 @@ from app.core.log_wrapper import log
 from app.core.settings import LocalhostConfig, ProductionConfig, TestConfig
 from app.core.env_var_wrapper import EnvironmentVariableWrapper
 from werkzeug.contrib.fixers import ProxyFix
+from jsonschema import FormatChecker
 
 bp = Blueprint('api', __name__)
 api = Api(bp, version='1.0', title='Calls API',
-          description='A Olist test', validate=True, doc='/docs')
+          description='A Olist test', validate=True,
+          format_checker=FormatChecker(formats=('date-time',)),
+          doc='/docs')
 
 
 def init_app():

@@ -1,7 +1,10 @@
 from app import app, init_db
-from app.db_models.example import Example
+from app.db_models.call import Call, CallDetail, CallDetailType
 
-Example()
+Call()
+CallDetail()
+CallDetailType()
+
 
 if __name__ == 'app.migrate':
     init_db(app)
