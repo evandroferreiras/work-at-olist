@@ -8,3 +8,4 @@ class Call(db.Model):
     started_date = db.Column(db.DateTime, nullable=False)
     finished_date = db.Column(db.DateTime, nullable=True)
     call_identifier = db.Column(db.Integer, unique=True)
+    price = db.Column(db.Float, nullable=True)

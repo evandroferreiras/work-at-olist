@@ -41,9 +41,9 @@ class BillBus(object):
         dt_first_day = datetime(dt_period.year, dt_period.month, 1)
         dt_last_day = datetime(dt_period.year, dt_period.month, last_day)
         records = (db.session.query(Call.destination_phone, Call.started_date,
-                                    Call.finished_date).filter(Call.source_phone == subscriber,
-                                                               Call.finished_date >= dt_first_day,
-                                                               Call.finished_date <= dt_last_day))
+                                    Call.finished_date, Call.price).filter(Call.source_phone == subscriber,
+                                                                           Call.finished_date >= dt_first_day,
+                                                                           Call.finished_date <= dt_last_day))
 
         results = []
         for r in records:
@@ -53,7 +53,8 @@ class BillBus(object):
                 'destination': r.destination_phone,
                 'start_date': st_date.strftime('%d/%m/%Y'),
                 'start_time': st_date.strftime('%H:%M:%S'),
-                'duration': (fi_date - st_date)
+                'duration': str(fi_date - st_date),
+                'price': "R$ " + str(r.price if r.price else 0.00)
             })
         return results
 
@@ -61,6 +62,7 @@ class BillBus(object):
         last_month = datetime.utcnow() - monthdelta(1)
         last_date = (db.session.query(Call.finished_date)
                      .filter(Call.finished_date <= last_month)
+                     .filter(Call.source_phone == subscriber)
                      .order_by(Call.finished_date.desc()).first())
         if last_date:
             last_date = last_date[0]
