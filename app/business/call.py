@@ -1,7 +1,7 @@
 import re
 from datetime import datetime
 from app.core.db import db
-from app.db_models.call import Call, CallDetail
+from app.db_models.call import Call
 from sqlalchemy.exc import IntegrityError
 
 
@@ -38,19 +38,14 @@ class CallBus(object):
     def __start_call(self, call_id, source_phone, destination_phone, date_str):
         try:
             call = Call()
-            call.id = call_id
+            call.call_identifier = call_id
             call.source_phone = source_phone
             call.destination_phone = destination_phone
-            db.session.add(call)
-
-            call_detail = CallDetail()
-            call_detail.call_id = call_id
-            call_detail.date_added = datetime.strptime(
+            call.started_date = datetime.strptime(
                 date_str, '%Y-%m-%dT%H:%M:%SZ')
-            call_detail.detail_type_id = 1  # Start
-            db.session.add(call_detail)
+            db.session.add(call)
             db.session.commit()
-            return call_detail.id
+            return call.id
         except IntegrityError as e:
             db.session.rollback()
             raise ValueError('\'call_id\' has already started.')
@@ -62,19 +57,19 @@ class CallBus(object):
 
     def __end_call(self, call_id, date_str):
         try:
-            if db.session.query(CallDetail.query.filter(CallDetail.call_id == call_id, CallDetail.detail_type_id == 2).exists()).scalar():
+            if db.session.query(Call.query.filter(Call.call_identifier == call_id, Call.finished_date != None).exists()).scalar():  # noqa: E711
                 raise ValueError('\'call_id\' has already ended.')
 
-            if not db.session.query(Call.query.filter(Call.id == call_id).exists()).scalar():
+            if not db.session.query(Call.query.filter(Call.call_identifier == call_id).exists()).scalar():
                 raise ValueError('invalid value for field \'call_id\'')
-            call_detail = CallDetail()
-            call_detail.call_id = call_id
-            call_detail.date_added = datetime.strptime(
+
+            call = db.session.query(Call).filter_by(
+                call_identifier=call_id).first()
+
+            call.finished_date = datetime.strptime(
                 date_str, '%Y-%m-%dT%H:%M:%SZ')
-            call_detail.detail_type_id = 2  # End
-            db.session.add(call_detail)
             db.session.commit()
-            return call_detail.id
+            return call.id
         except:
             db.session.rollback()
             raise
