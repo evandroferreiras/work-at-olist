@@ -2,6 +2,7 @@ import re
 from datetime import datetime
 from app.core.db import db
 from app.core.constants import REGEX_VALIDATE_PHONE
+from app.business.price import PriceBus
 from app.db_models.call import Call
 from sqlalchemy.exc import IntegrityError
 
@@ -66,6 +67,7 @@ class CallBus(object):
 
             call.finished_date = datetime.strptime(
                 date_str, '%Y-%m-%dT%H:%M:%SZ')
+            call.price = PriceBus().calc_price(call.started_date, call.finished_date)
             db.session.commit()
             return call.id
         except:

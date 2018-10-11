@@ -23,6 +23,7 @@ class BillTestCase(BaseTestCase):
         self.assertEqual('01/02/2014', rjson['records'][0]['start_date'])
         self.assertEqual('02:00:00', rjson['records'][0]['start_time'])
         self.assertEqual('1:05:00', rjson['records'][0]['duration'])
+        self.assertEqual("R$ 97.56", rjson['records'][0]['price'])
 
     def test_if_return_more_than_one_record(self):
         self.setup_data()
@@ -39,10 +40,12 @@ class BillTestCase(BaseTestCase):
         self.assertEqual('01/01/2014', rjson['records'][0]['start_date'])
         self.assertEqual('15:00:00', rjson['records'][0]['start_time'])
         self.assertEqual('0:05:00', rjson['records'][0]['duration'])
+        self.assertEqual("R$ 0.81", rjson['records'][0]['price'])
         self.assertEqual('51982881000', rjson['records'][1]['destination'])
         self.assertEqual('30/01/2014', rjson['records'][1]['start_date'])
         self.assertEqual('16:00:00', rjson['records'][1]['start_time'])
         self.assertEqual('0:15:00', rjson['records'][1]['duration'])
+        self.assertEqual("R$ 1.71", rjson['records'][1]['price'])
 
     def test_if_return_last_period_when_not_informed(self):
         self.setup_data()
@@ -55,6 +58,7 @@ class BillTestCase(BaseTestCase):
         self.assertEqual('01/03/2014', rjson['records'][0]['start_date'])
         self.assertEqual('15:00:00', rjson['records'][0]['start_time'])
         self.assertEqual('0:05:00', rjson['records'][0]['duration'])
+        self.assertEqual("R$ 0.81", rjson['records'][0]['price'])
 
     def test_if_subscriber_argument_is_required(self):
         rv = self.app.get('/bill')
@@ -85,6 +89,23 @@ class BillTestCase(BaseTestCase):
         self.assertIsNone(rv.json['period'])
         self.assertEqual([], rv.json['records'])
         self.assertEqual(200, rv.status_code)
+
+    def test_if_duration_is_zero(self):
+        self.setup_data()
+        query_string = {
+            "subscriber": "51982719999",
+            "period": "11/2014"
+        }
+        rv = self.app.get('/bill?' + urllib.parse.urlencode(query_string))
+        rjson = rv.json
+        self.assertEqual(200, rv.status_code)
+        self.assertEqual('11/2014', rjson['period'])
+        self.assertEqual(1, len(rjson['records']))
+        self.assertEqual('51982888884', rjson['records'][0]['destination'])
+        self.assertEqual('01/11/2014', rjson['records'][0]['start_date'])
+        self.assertEqual('15:00:00', rjson['records'][0]['start_time'])
+        self.assertEqual('0:00:00', rjson['records'][0]['duration'])
+        self.assertEqual("R$ 0.36", rjson['records'][0]['price'])
 
     def setup_data(self):
         self.app.post('/call',
@@ -166,5 +187,22 @@ class BillTestCase(BaseTestCase):
                           "type": "end",
                           "timestamp": datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ"),
                           "call_id": 5
+                      }),
+                      content_type='application/json')
+
+        self.app.post('/call',
+                      data=json.dumps({
+                          "type": "start",
+                          "timestamp": "2014-11-01T15:00:00Z",
+                          "call_id": 6,
+                          "source": "51982719999",
+                          "destination": "51982888884"
+                      }),
+                      content_type='application/json')
+        self.app.post('/call',
+                      data=json.dumps({
+                          "type": "end",
+                          "timestamp": "2014-11-01T15:00:00Z",
+                          "call_id": 6
                       }),
                       content_type='application/json')

@@ -6,7 +6,7 @@ bill_detail = api.model('BillDetailRecord', {
     'start_date': fields.String(required=False, description='Date formated', example='01/11/2018'),
     'start_time': fields.String(required=False, description='Time formated', example='10:30:58'),
     'duration': fields.String(required=False, description='Duration in hour, minute and seconds', example='0h35m42s'),
-    'price': fields.Float(required=False, description='Price calculated for the call', example='R$ 3,96')
+    'price': fields.String(required=False, description='Price calculated for the call', example='R$ 3,96')
 })
 
 bill = api.model('BillRecord', {
