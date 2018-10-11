@@ -1,11 +1,9 @@
 import re
 from datetime import datetime
 from app.core.db import db
+from app.core.constants import REGEX_VALIDATE_PHONE
 from app.db_models.call import Call
 from sqlalchemy.exc import IntegrityError
-
-
-REGEX_VALIDATE_PHONE = r'^(\d\d\d\d\d\d\d\d\d\d\d)$'
 
 
 class CallBus(object):

@@ -57,7 +57,6 @@ class CallStartTestCase(BaseTestCase):
         rv = self.app.post('/call', data=json.dumps(self.post_data),
                            content_type='application/json')
         rjson = rv.json
-        print(rjson)
         self.assertEqual(400, rv.status_code)
         self.assertEqual('\'call_id\' has already started.', rjson['message'])
 
@@ -134,7 +133,6 @@ class CallEndTestCase(BaseTestCase):
         rv = self.app.post('/call', data=json.dumps(self.post_data),
                            content_type='application/json')
         rjson = rv.json
-        print(rjson)
         self.assertEqual(200, rv.status_code)
         self.assertEqual(1, rjson['id'])
         for key, value in self.return_data.items():
@@ -148,7 +146,6 @@ class CallEndTestCase(BaseTestCase):
         rv = self.app.post('/call', data=json.dumps(self.post_data),
                            content_type='application/json')
         rjson = rv.json
-        print(rjson)
         self.assertEqual(400, rv.status_code)
         self.assertEqual('\'call_id\' has already ended.', rjson['message'])
 
