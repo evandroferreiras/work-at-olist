@@ -31,6 +31,30 @@ class CallStartTestCase(BaseTestCase):
         for key, value in self.return_data.items():
             self.assertEqual(value, rjson[key])
 
+    def test_if_ignore_changes_after_insert_first_call(self):
+        rv = self.app.post('/call', data=json.dumps(self.post_data),
+                           content_type='application/json')
+        rjson = rv.json
+        self.assertEqual(200, rv.status_code)
+        self.assertEqual(1, rjson['id'])
+        for key, value in self.return_data.items():
+            self.assertEqual(value, rjson[key])
+
+        post_data = dict(
+            type="start",
+            timestamp="2014-01-01T15:55:00Z",
+            call_id=10,
+            source="51982323232",
+            destination="51982888884"
+        )
+        rv = self.app.post('/call', data=json.dumps(post_data),
+                           content_type='application/json')
+        rjson = rv.json
+        self.assertEqual(200, rv.status_code)
+        self.assertEqual(1, rjson['id'])
+        for key, value in self.return_data.items():
+            self.assertEqual(value, rjson[key])
+
     def test_if_fail_when_missing_required_fields(self):
         required_fields = [
             'type',
@@ -50,15 +74,6 @@ class CallStartTestCase(BaseTestCase):
                 error_msg = rv.json['message']
             self.assertIn('required', error_msg)
             self.assertEqual(400, rv.status_code)
-
-    def test_if_fail_when_call_id_is_duplicated(self):
-        rv = self.app.post('/call', data=json.dumps(self.post_data),
-                           content_type='application/json')
-        rv = self.app.post('/call', data=json.dumps(self.post_data),
-                           content_type='application/json')
-        rjson = rv.json
-        self.assertEqual(400, rv.status_code)
-        self.assertEqual('\'call_id\' has already started.', rjson['message'])
 
     def test_if_fail_when_field_type_is_invalid(self):
         post_data = copy(self.post_data)
@@ -138,6 +153,16 @@ class CallEndTestCase(BaseTestCase):
         for key, value in self.return_data.items():
             self.assertEqual(value, rjson[key])
 
+    def test_if_save_without_start_call(self):
+        rv = self.app.post('/call', data=json.dumps(self.post_data),
+                           content_type='application/json')
+        rjson = rv.json
+        print(rjson)
+        self.assertEqual(200, rv.status_code)
+        self.assertEqual(1, rjson['id'])
+        for key, value in self.return_data.items():
+            self.assertEqual(value, rjson[key])
+
     def test_if_fail_when_the_call_has_already_ended(self):
         self.app.post('/call', data=json.dumps(self.start_post_data),
                       content_type='application/json')
@@ -148,14 +173,6 @@ class CallEndTestCase(BaseTestCase):
         rjson = rv.json
         self.assertEqual(400, rv.status_code)
         self.assertEqual('\'call_id\' has already ended.', rjson['message'])
-
-    def test_if_fail_when_pass_wrong_call_id(self):
-        self.post_data['call_id'] = 100
-        rv = self.app.post('/call', data=json.dumps(self.post_data),
-                           content_type='application/json')
-        rjson = rv.json
-        self.assertEqual(400, rv.status_code)
-        self.assertIn('call_id', rjson['message'])
 
     def test_if_fail_when_missing_required_fields(self):
         required_fields = [
