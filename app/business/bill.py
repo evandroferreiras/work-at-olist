@@ -53,10 +53,17 @@ class BillBus(object):
                 'destination': r.destination_phone,
                 'start_date': st_date.strftime('%d/%m/%Y'),
                 'start_time': st_date.strftime('%H:%M:%S'),
-                'duration': str(fi_date - st_date),
+                'duration': self.__format_duration(st_date, fi_date),
                 'price': "R$ " + str(r.price if r.price else 0.00)
             })
         return results
+
+    def __format_duration(self, st_date, fi_date):
+        value = str(fi_date - st_date)
+        sp_text = value.split(':')
+        if sp_text:
+            return f'{sp_text[0]}h{sp_text[1]}m{sp_text[2]}s'
+        return '0h00m00s'
 
     def __get_period(self, subscriber):
         last_month = datetime.utcnow() - monthdelta(1)
