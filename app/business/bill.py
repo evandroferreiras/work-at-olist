@@ -59,11 +59,12 @@ class BillBus(object):
         return results
 
     def __format_duration(self, st_date, fi_date):
-        value = str(fi_date - st_date)
-        sp_text = value.split(':')
-        if sp_text:
-            return f'{sp_text[0]}h{sp_text[1]}m{sp_text[2]}s'
-        return '0h00m00s'
+        duration = (fi_date - st_date)
+        seconds = duration.total_seconds()
+        hours = int(seconds // 3600)
+        minutes = int((seconds % 3600) // 60)
+        seconds = int(seconds % 60)
+        return f'{"{:.0f}".format(hours)}h{"{:0>2d}".format(minutes)}m{"{:0>2d}".format(seconds)}s'
 
     def __get_period(self, subscriber):
         last_month = datetime.utcnow() - monthdelta(1)

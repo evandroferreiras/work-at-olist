@@ -1,1 +1,1 @@
-REGEX_VALIDATE_PHONE = r'^(\d\d\d\d\d\d\d\d\d\d\d)$'
+REGEX_VALIDATE_PHONE = r'^(\d{10,11})$'

@@ -107,6 +107,23 @@ class BillTestCase(BaseTestCase):
         self.assertEqual('0h00m00s', rjson['records'][0]['duration'])
         self.assertEqual("R$ 0.36", rjson['records'][0]['price'])
 
+    def test_if_duration_for_call_more_than_one_day(self):
+        self.setup_data()
+        query_string = {
+            "subscriber": "51982719999",
+            "period": "10/2014"
+        }
+        rv = self.app.get('/bill?' + urllib.parse.urlencode(query_string))
+        rjson = rv.json
+        self.assertEqual(200, rv.status_code)
+        self.assertEqual('10/2014', rjson['period'])
+        self.assertEqual(1, len(rjson['records']))
+        self.assertEqual('51982888884', rjson['records'][0]['destination'])
+        self.assertEqual('01/10/2014', rjson['records'][0]['start_date'])
+        self.assertEqual('15:00:00', rjson['records'][0]['start_time'])
+        self.assertEqual('24h00m00s', rjson['records'][0]['duration'])
+        self.assertEqual("R$ 86.76", rjson['records'][0]['price'])
+
     def test_if_price_dont_change_after_second_call(self):
         self.setup_data()
         query_string = {
@@ -239,5 +256,21 @@ class BillTestCase(BaseTestCase):
                           "type": "end",
                           "timestamp": "2014-11-01T15:00:00Z",
                           "call_id": 6
+                      }),
+                      content_type='application/json')
+        self.app.post('/call',
+                      data=json.dumps({
+                          "type": "start",
+                          "timestamp": "2014-10-01T15:00:00Z",
+                          "call_id": 7,
+                          "source": "51982719999",
+                          "destination": "51982888884"
+                      }),
+                      content_type='application/json')
+        self.app.post('/call',
+                      data=json.dumps({
+                          "type": "end",
+                          "timestamp": "2014-10-02T15:00:00Z",
+                          "call_id": 7
                       }),
                       content_type='application/json')
