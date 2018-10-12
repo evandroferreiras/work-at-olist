@@ -107,6 +107,41 @@ class BillTestCase(BaseTestCase):
         self.assertEqual('0:00:00', rjson['records'][0]['duration'])
         self.assertEqual("R$ 0.36", rjson['records'][0]['price'])
 
+    def test_if_price_dont_change_after_second_call(self):
+        self.setup_data()
+        query_string = {
+            "subscriber": "51982717456",
+            "period": "02/2014"
+        }
+        rv = self.app.get('/bill?' + urllib.parse.urlencode(query_string))
+        rjson = rv.json
+        self.assertEqual(200, rv.status_code)
+        self.assertEqual('02/2014', rjson['period'])
+        self.assertEqual(1, len(rjson['records']))
+        self.assertEqual('51982888925', rjson['records'][0]['destination'])
+        self.assertEqual('01/02/2014', rjson['records'][0]['start_date'])
+        self.assertEqual('02:00:00', rjson['records'][0]['start_time'])
+        self.assertEqual('1:05:00', rjson['records'][0]['duration'])
+        self.assertEqual("R$ 97.56", rjson['records'][0]['price'])
+
+        self.app.post('/call',
+                      data=json.dumps({
+                          "type": "end",
+                          "timestamp": "2014-02-01T03:55:00Z",
+                          "call_id": 3
+                      }),
+                      content_type='application/json')
+        rv = self.app.get('/bill?' + urllib.parse.urlencode(query_string))
+        rjson = rv.json
+        self.assertEqual(200, rv.status_code)
+        self.assertEqual('02/2014', rjson['period'])
+        self.assertEqual(1, len(rjson['records']))
+        self.assertEqual('51982888925', rjson['records'][0]['destination'])
+        self.assertEqual('01/02/2014', rjson['records'][0]['start_date'])
+        self.assertEqual('02:00:00', rjson['records'][0]['start_time'])
+        self.assertEqual('1:05:00', rjson['records'][0]['duration'])
+        self.assertEqual("R$ 97.56", rjson['records'][0]['price'])
+
     def setup_data(self):
         self.app.post('/call',
                       data=json.dumps({
