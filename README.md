@@ -1,4 +1,5 @@
-# Calls API - OList test 
+
+# Calls API - OList test [![CircleCI](https://circleci.com/gh/evandroferreiras/work-at-olist/tree/master.svg?style=svg)](https://circleci.com/gh/evandroferreiras/work-at-olist/tree/master)
 This is a RESTFul API developed in Python that has two main features:
 - Receives call detail records and store 
 - Calculate monthly bills for a given telephone number.
