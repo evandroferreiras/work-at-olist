@@ -22,7 +22,7 @@ class BillTestCase(BaseTestCase):
         self.assertEqual('51982888925', rjson['records'][0]['destination'])
         self.assertEqual('01/02/2014', rjson['records'][0]['start_date'])
         self.assertEqual('02:00:00', rjson['records'][0]['start_time'])
-        self.assertEqual('1:05:00', rjson['records'][0]['duration'])
+        self.assertEqual('1h05m00s', rjson['records'][0]['duration'])
         self.assertEqual("R$ 97.56", rjson['records'][0]['price'])
 
     def test_if_return_more_than_one_record(self):
@@ -39,12 +39,12 @@ class BillTestCase(BaseTestCase):
         self.assertEqual('51982881001', rjson['records'][0]['destination'])
         self.assertEqual('01/01/2014', rjson['records'][0]['start_date'])
         self.assertEqual('15:00:00', rjson['records'][0]['start_time'])
-        self.assertEqual('0:05:00', rjson['records'][0]['duration'])
+        self.assertEqual('0h05m00s', rjson['records'][0]['duration'])
         self.assertEqual("R$ 0.81", rjson['records'][0]['price'])
         self.assertEqual('51982881000', rjson['records'][1]['destination'])
         self.assertEqual('30/01/2014', rjson['records'][1]['start_date'])
         self.assertEqual('16:00:00', rjson['records'][1]['start_time'])
-        self.assertEqual('0:15:00', rjson['records'][1]['duration'])
+        self.assertEqual('0h15m00s', rjson['records'][1]['duration'])
         self.assertEqual("R$ 1.71", rjson['records'][1]['price'])
 
     def test_if_return_last_period_when_not_informed(self):
@@ -57,7 +57,7 @@ class BillTestCase(BaseTestCase):
         self.assertEqual('51982888900', rjson['records'][0]['destination'])
         self.assertEqual('01/03/2014', rjson['records'][0]['start_date'])
         self.assertEqual('15:00:00', rjson['records'][0]['start_time'])
-        self.assertEqual('0:05:00', rjson['records'][0]['duration'])
+        self.assertEqual('0h05m00s', rjson['records'][0]['duration'])
         self.assertEqual("R$ 0.81", rjson['records'][0]['price'])
 
     def test_if_subscriber_argument_is_required(self):
@@ -104,7 +104,7 @@ class BillTestCase(BaseTestCase):
         self.assertEqual('51982888884', rjson['records'][0]['destination'])
         self.assertEqual('01/11/2014', rjson['records'][0]['start_date'])
         self.assertEqual('15:00:00', rjson['records'][0]['start_time'])
-        self.assertEqual('0:00:00', rjson['records'][0]['duration'])
+        self.assertEqual('0h00m00s', rjson['records'][0]['duration'])
         self.assertEqual("R$ 0.36", rjson['records'][0]['price'])
 
     def test_if_price_dont_change_after_second_call(self):
@@ -121,7 +121,7 @@ class BillTestCase(BaseTestCase):
         self.assertEqual('51982888925', rjson['records'][0]['destination'])
         self.assertEqual('01/02/2014', rjson['records'][0]['start_date'])
         self.assertEqual('02:00:00', rjson['records'][0]['start_time'])
-        self.assertEqual('1:05:00', rjson['records'][0]['duration'])
+        self.assertEqual('1h05m00s', rjson['records'][0]['duration'])
         self.assertEqual("R$ 97.56", rjson['records'][0]['price'])
 
         self.app.post('/call',
@@ -139,7 +139,7 @@ class BillTestCase(BaseTestCase):
         self.assertEqual('51982888925', rjson['records'][0]['destination'])
         self.assertEqual('01/02/2014', rjson['records'][0]['start_date'])
         self.assertEqual('02:00:00', rjson['records'][0]['start_time'])
-        self.assertEqual('1:05:00', rjson['records'][0]['duration'])
+        self.assertEqual('1h05m00s', rjson['records'][0]['duration'])
         self.assertEqual("R$ 97.56", rjson['records'][0]['price'])
 
     def setup_data(self):
