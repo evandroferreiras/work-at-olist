@@ -9,7 +9,7 @@ from jsonschema import FormatChecker
 bp = Blueprint('api', __name__)
 api = Api(bp, version='1.0', title='Calls API',
           description='A Olist test', validate=True,
-          format_checker=FormatChecker(formats=('date-time',)),
+          format_checker=FormatChecker(formats=['date-time']),
           doc='/docs')
 
 

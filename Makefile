@@ -1,18 +1,18 @@
 run_dev:
-	if flake8 app/.; then\
+	if python -m flake8 app/.; then\
 		export LOCALHOST_DATABASE_URI=postgresql://dev:my-password@localhost:5432/mylocaldb; \
 		export FLASK_ENV=development; \
-		FLASK_APP=app flask run; \
+		FLASK_APP=app python -m flask run; \
 	else\
-		flake8 app/.;\
+		python -m flake8 app/.;\
 	fi
 
 test:
-	if flake8 app/.; then\
+	if python -m flake8 app/.; then\
 		export FLASK_ENV=test; \
-		pytest --pyargs ./tests/ -v; \
+		python -m pytest --pyargs ./tests/ -v; \
 	else\
-		flake8 app/.;\
+		python -m flake8 app/.;\
 	fi
 
 install:
@@ -24,9 +24,9 @@ create_db_dev:
 generate_migrate:
 	export LOCALHOST_DATABASE_URI=postgresql://dev:my-password@localhost:5432/mylocaldb; \
 	export FLASK_ENV=development; \
-	FLASK_APP=app/migrate flask db migrate
+	FLASK_APP=app/migrate python -m flask db migrate
 
 apply_upgrade_dev:
 	export LOCALHOST_DATABASE_URI=postgresql://dev:my-password@localhost:5432/mylocaldb; \
 	export FLASK_ENV=development; \
-	FLASK_APP=app/migrate flask db upgrade
+	FLASK_APP=app/migrate python -m flask db upgrade
